@@ -1,0 +1,6 @@
+@ClinicaFisioterapiaApi_HostAddress = http://localhost:5254
+
+GET {{ClinicaFisioterapiaApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
