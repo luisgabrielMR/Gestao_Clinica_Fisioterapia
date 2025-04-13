@@ -13,5 +13,9 @@ Ferramentas: DBeaver, Docker, Postman
 📡 API RESTful
 A API está sendo construída utilizando a arquitetura RESTful, permitindo operações de cadastro, leitura, atualização e remoção de dados (CRUD).
 
-Os testes da API estão sendo realizados via Postman.
-Você pode acessar a coleção de testes clicando aqui https://documenter.getpostman.com/view/38385711/2sB2cYdfvf.
+📚 Índice de Documentações da API
+
+Abaixo estão listadas as documentações de todas as coleções disponíveis no workspace:
+1. [Clinicas API](https://documenter.getpostman.com/view/38385711/2sB2ca5eYh)
+2. [Usuarios API](https://documenter.getpostman.com/view/38385711/2sB2cYdfvf)
+3. [ConexãoBanco API](https://documenter.getpostman.com/view/38385711/2sB2ca5eYj)

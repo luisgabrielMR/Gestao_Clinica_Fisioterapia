@@ -6,8 +6,8 @@ builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .LogTo(Console.WriteLine, LogLevel.Information) // Log de consultas SQL
-        .EnableSensitiveDataLogging()); // Mostra valores dos parâmetros
+        .LogTo(Console.WriteLine, LogLevel.Information) 
+        .EnableSensitiveDataLogging()); 
 
 
 var app = builder.Build();

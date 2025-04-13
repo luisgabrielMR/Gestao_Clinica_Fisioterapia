@@ -12,8 +12,10 @@ namespace ClinicaFisioterapiaApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("users");
+            modelBuilder.Entity<Clinic>().ToTable("clinics");
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Clinic> Clinics { get; set; } 
     }
 }

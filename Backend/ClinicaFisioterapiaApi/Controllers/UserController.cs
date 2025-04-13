@@ -3,6 +3,8 @@ using ClinicaFisioterapiaApi.Data;
 using ClinicaFisioterapiaApi.Models;
 using System;
 using System.Linq;
+using ClinicaFisioterapiaApi.Dtos.Users;
+using Microsoft.EntityFrameworkCore; // Necessário para o FirstOrDefaultAsync
 
 namespace ClinicaFisioterapiaApi.Controllers
 {
@@ -23,11 +25,17 @@ namespace ClinicaFisioterapiaApi.Controllers
         {
             try
             {
-                var users = _context.Users.ToList();
+                var users = _context.Users
+                    .Select(user => new UserDto
+                    {
+                        UserId = user.UserId,
+                        Name = user.Name
+                    })
+                    .ToList();
 
                 if (users == null || users.Count == 0)
                 {
-                    return NotFound("Usuário não encontrado");
+                    return NotFound("Nenhum usuário encontrado.");
                 }
 
                 return Ok(users);
@@ -40,7 +48,7 @@ namespace ClinicaFisioterapiaApi.Controllers
 
         // POST: api/User
         [HttpPost]
-        public IActionResult CreateUser([FromBody] User user)
+        public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
             if (!ModelState.IsValid)
             {
@@ -49,9 +57,22 @@ namespace ClinicaFisioterapiaApi.Controllers
 
             try
             {
+                if (_context.Users.Any(u => u.Name == createUserDto.Name))
+                {
+                    ModelState.AddModelError("Name", "Já existe um usuário com este nome.");
+                    return BadRequest(ModelState);
+                }
+
+                var user = new User(createUserDto.Name, createUserDto.Password);
+
                 _context.Users.Add(user);
                 _context.SaveChanges();
-                return CreatedAtAction(nameof(GetUsers), new { id = user.UserId }, user);
+
+                return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, new UserDto { UserId = user.UserId, Name = user.Name });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -59,24 +80,53 @@ namespace ClinicaFisioterapiaApi.Controllers
             }
         }
 
-                // PUT: api/User/{id}
+        // GET: api/User/{id}
+        [HttpGet("{id}")]
+        public IActionResult GetUserById(int id)
+        {
+            try
+            {
+                var user = _context.Users.Select(u => new UserDto { UserId = u.UserId, Name = u.Name }).FirstOrDefault(u => u.UserId == id);
+
+                if (user == null)
+                {
+                    return NotFound("Usuário não encontrado.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        // PUT: api/User/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] User updatedUser)
+        public IActionResult UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             try
             {
                 var existingUser = _context.Users.Find(id);
-                if (existingUser == null)
-                    return NotFound("Usuário não encontrado");
 
-                existingUser.Name = updatedUser.Name;
-                existingUser.Password = updatedUser.Password;
+                if (existingUser == null)
+                {
+                    return NotFound("Usuário não encontrado");
+                }
+
+                existingUser.Update(updateUserDto.Name, updateUserDto.Password);
 
                 _context.SaveChanges();
                 return NoContent(); // 204 No Content
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -92,8 +142,9 @@ namespace ClinicaFisioterapiaApi.Controllers
             {
                 var user = _context.Users.Find(id);
                 if (user == null)
+                {
                     return NotFound("Usuário não encontrado");
-
+                }
                 _context.Users.Remove(user);
                 _context.SaveChanges();
                 return NoContent(); // 204 No Content
