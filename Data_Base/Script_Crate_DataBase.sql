@@ -1,110 +1,138 @@
--- Create database (if it doesn't already exist)
-CREATE DATABASE physiotherapy_clinic;
 
--- Create table for Clinics
+-- ======================
+-- CREATE TABLES
+-- ======================
+
+-- 1. Clinics
 CREATE TABLE Clinics (
-    ClinicId SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Address VARCHAR(255) NOT NULL,
-    Neighborhood VARCHAR(100),
-    City VARCHAR(100) NOT NULL,
-    State VARCHAR(100),
-    ZipCode VARCHAR(10)
+    clinic_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address TEXT NOT NULL,
+    neighborhood VARCHAR(100),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100),
+    zip_code VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for Patients
-CREATE TABLE Patients (
-    Id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    BirthDate DATE NOT NULL,
-    CPF VARCHAR(14) UNIQUE NOT NULL,
-    Phone VARCHAR(20),
-    Address TEXT,
-    Neighborhood VARCHAR(100),
-    City VARCHAR(100),
-    State VARCHAR(100),
-    ZipCode VARCHAR(10),
-    GestationWeeks INT CHECK (GestationWeeks BETWEEN 20 AND 42), -- Common gestation range
-    DeliveryType VARCHAR(10) CHECK (DeliveryType IN ('Normal', 'Cesárea')), -- Normal or Cesarean delivery
-    WasPremature BOOLEAN GENERATED ALWAYS AS (GestationWeeks < 37) STORED, -- If weeks < 37, premature
-    BirthHistory TEXT, -- Details about the birth
-    MainComplaint TEXT, -- Patient's main complaint
-    Observations TEXT -- Additional observations
+-- 2. General People Table
+CREATE TABLE People (
+    person_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    cpf VARCHAR(14) NOT NULL UNIQUE,
+    birth_date DATE,
+    phone VARCHAR(20),
+    email VARCHAR(255),
+    address TEXT,
+    neighborhood VARCHAR(100),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    zip_code VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create table for Companions
-CREATE TABLE Companions (
-    CompanionId SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    CPF VARCHAR(14) NOT NULL UNIQUE,
-    Address VARCHAR(255) NOT NULL,
-    Phone VARCHAR(20),
-    BirthDate DATE 
-);
-
--- Create table for link between Patients and Companions
-CREATE TABLE PatientCompanion (
-    PatientId INT NOT NULL,
-    CompanionId INT NOT NULL,
-    PRIMARY KEY (PatientId, CompanionId),
-    FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE,
-    FOREIGN KEY (CompanionId) REFERENCES Companions(CompanionId) ON DELETE CASCADE
-);
-
--- Create table for Physiotherapists
-CREATE TABLE Physiotherapists (
-    PhysiotherapistId SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    CPF VARCHAR(14) NOT NULL UNIQUE,
-    Email VARCHAR(255) NOT NULL,
-    Phone VARCHAR(15) NOT NULL
-);
-
--- Create table for Physiotherapists and Clinics (associate physiotherapists to clinics)
-CREATE TABLE PhysiotherapistClinic (
-    PhysiotherapistId INT NOT NULL,
-    ClinicId INT NOT NULL,
-    FOREIGN KEY (PhysiotherapistId) REFERENCES Physiotherapists(PhysiotherapistId) ON DELETE CASCADE,
-    FOREIGN KEY (ClinicId) REFERENCES Clinics(ClinicId) ON DELETE CASCADE,
-    PRIMARY KEY (PhysiotherapistId, ClinicId)
-);
-
--- Create table for Schedules (appointment times for each physiotherapist at each clinic)
-CREATE TABLE Schedules (
-    ScheduleId SERIAL PRIMARY KEY,
-    PhysiotherapistId INT NOT NULL,
-    ClinicId INT NOT NULL,
-    Day DATE NOT NULL,
-    Time TIME NOT NULL,
-    Available BOOLEAN NOT NULL DEFAULT TRUE,
-    FOREIGN KEY (PhysiotherapistId) REFERENCES Physiotherapists(PhysiotherapistId) ON DELETE CASCADE,
-    FOREIGN KEY (ClinicId) REFERENCES Clinics(ClinicId) ON DELETE CASCADE
-);
-
--- Create table for Booked Schedules (confirmed appointments)
-CREATE TABLE BookedSchedules (
-    BookedScheduleId SERIAL PRIMARY KEY,
-    PatientId INT NOT NULL,
-    PhysiotherapistId INT NOT NULL,
-    ClinicId INT NOT NULL,
-    ScheduleId INT NOT NULL,
-    DateTime TIMESTAMP NOT NULL,
-    Observations TEXT,
-    FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE,
-    FOREIGN KEY (PhysiotherapistId) REFERENCES Physiotherapists(PhysiotherapistId) ON DELETE CASCADE,
-    FOREIGN KEY (ClinicId) REFERENCES Clinics(ClinicId) ON DELETE CASCADE,
-    FOREIGN KEY (ScheduleId) REFERENCES Schedules(ScheduleId) ON DELETE CASCADE
-);
-
--- Create table for Users
+-- 3. Users Table (for authentication)
 CREATE TABLE Users (
-    UserId SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL
+    user_id SERIAL PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (person_id) REFERENCES People(person_id) ON DELETE CASCADE
 );
 
--- Create indexes for performance
-CREATE INDEX idx_clinics_city ON Clinics(City);
-CREATE INDEX idx_physiotherapists_cpf ON Physiotherapists(CPF);
-CREATE INDEX idx_schedules_physiotherapist_clinic ON Schedules(PhysiotherapistId, ClinicId);
-CREATE INDEX idx_bookedschedules_physiotherapist_clinic_patient ON BookedSchedules(PhysiotherapistId, ClinicId, PatientId);
+-- 4. Specializations
+
+-- Patients
+CREATE TABLE Patients (
+    patient_id SERIAL PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    gestation_weeks INT CHECK (gestation_weeks BETWEEN 20 AND 42),
+    delivery_type VARCHAR(10) CHECK (delivery_type IN ('Normal', 'Cesárea')),
+    was_premature BOOLEAN GENERATED ALWAYS AS (gestation_weeks < 37) STORED,
+    birth_history TEXT,
+    main_complaint TEXT,
+    observations TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (person_id) REFERENCES People(person_id) ON DELETE CASCADE
+);
+
+-- Companions
+CREATE TABLE Companions (
+    companion_id SERIAL PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (person_id) REFERENCES People(person_id) ON DELETE CASCADE
+);
+
+-- Relationship Patient ↔ Companion (N:N)
+CREATE TABLE PatientCompanion (
+    patient_id INT NOT NULL,
+    companion_id INT NOT NULL,
+    PRIMARY KEY (patient_id, companion_id),
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (companion_id) REFERENCES Companions(companion_id) ON DELETE CASCADE
+);
+
+-- Physiotherapists
+CREATE TABLE Physiotherapists (
+    physiotherapist_id SERIAL PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (person_id) REFERENCES People(person_id) ON DELETE CASCADE
+);
+
+-- 5. Relationship Physiotherapist ↔ Clinic (N:N)
+CREATE TABLE PhysiotherapistClinic (
+    physiotherapist_id INT NOT NULL,
+    clinic_id INT NOT NULL,
+    PRIMARY KEY (physiotherapist_id, clinic_id),
+    FOREIGN KEY (physiotherapist_id) REFERENCES Physiotherapists(physiotherapist_id) ON DELETE CASCADE,
+    FOREIGN KEY (clinic_id) REFERENCES Clinics(clinic_id) ON DELETE CASCADE
+);
+
+-- 6. Weekly Availability
+CREATE TABLE WeeklyAvailability (
+    availability_id SERIAL PRIMARY KEY,
+    physiotherapist_id INT NOT NULL,
+    clinic_id INT NOT NULL,
+    weekday SMALLINT NOT NULL CHECK (weekday BETWEEN 0 AND 6), -- 0 = Sunday, 6 = Saturday
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (physiotherapist_id) REFERENCES Physiotherapists(physiotherapist_id) ON DELETE CASCADE,
+    FOREIGN KEY (clinic_id) REFERENCES Clinics(clinic_id) ON DELETE CASCADE,
+    CHECK (start_time < end_time)
+);
+
+-- 7. Appointments (Real bookings)
+CREATE TABLE Appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    patient_id INT NOT NULL,
+    physiotherapist_id INT NOT NULL,
+    clinic_id INT NOT NULL,
+    appointment_datetime TIMESTAMP NOT NULL,
+    observations TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (physiotherapist_id) REFERENCES Physiotherapists(physiotherapist_id) ON DELETE CASCADE,
+    FOREIGN KEY (clinic_id) REFERENCES Clinics(clinic_id) ON DELETE CASCADE
+);
+
+-- ======================
+-- Indexes for performance
+-- ======================
+
+CREATE INDEX idx_people_cpf ON People(cpf);
+CREATE INDEX idx_people_city ON People(city);
+CREATE INDEX idx_clinics_city ON Clinics(city);
+CREATE INDEX idx_availability_physio_weekday ON WeeklyAvailability(physiotherapist_id, weekday);
+CREATE INDEX idx_appointments_datetime ON Appointments(appointment_datetime);
+CREATE INDEX idx_appointments_physio_patient ON Appointments(physiotherapist_id, patient_id);
