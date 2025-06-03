@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,62 +7,31 @@ namespace ClinicaFisioterapiaApi.Models
     public class User
     {
         [Key]
-        [Column("userid")]
-        public int UserId { get; private set; }
+        [Column("user_id")]
+        public int UserId { get; set; }
 
-        private string _name = string.Empty;
-        [Required(ErrorMessage = "O nome do usuário é obrigatório.")]
-        [StringLength(100, ErrorMessage = "O nome do usuário deve ter no máximo {1} caracteres.")]
-        [Column("name")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("O nome do usuário não pode ser vazio.");
-                }
-                _name = value.Trim();
-            }
-        }
+        [Column("username")]
+        [Required]
+        [StringLength(100)]
+        public string Username { get; set; } = string.Empty;
 
-        private string _password = string.Empty;
-        [Required(ErrorMessage = "A senha é obrigatória.")]
-        [StringLength(255, ErrorMessage = "A senha deve ter no máximo {1} caracteres.")]
-        [Column("password")]
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("A senha não pode ser vazia.");
-                }
-                _password = value; 
-            }
-        }
+        [Column("password_hash")]
+        public string PasswordHash { get; set; } = string.Empty;
 
-        // Construtor sem parâmetros (EF Core)
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+
         public User() { }
 
-        public User(string name, string password)
+        public User(string username, string passwordHash)
         {
-            Name = name;
-            Password = password;
-        }
-
-        public void Update(string? name = null, string? password = null)
-        {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                Name = name;
-            }
-            if (!string.IsNullOrWhiteSpace(password))
-            {
-                Password = password;
-            }
+            Username = username;
+            PasswordHash = passwordHash;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }

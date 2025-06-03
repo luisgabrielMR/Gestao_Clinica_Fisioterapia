@@ -8,7 +8,7 @@ namespace ClinicaFisioterapiaApi.Models
     {
         [Key]
         [Column("clinicid")]
-        public int ClinicId { get; private set; } // Tornando o ID somente leitura após a criação
+        public int ClinicId { get; private set; } 
 
         private string _name = string.Empty;
         [Required(ErrorMessage = "O nome da clínica é obrigatório.")]
@@ -23,7 +23,7 @@ namespace ClinicaFisioterapiaApi.Models
                 {
                     throw new ArgumentException("O nome da clínica não pode ser vazio.");
                 }
-                _name = value.Trim(); // Removendo espaços em branco extras
+                _name = value.Trim(); 
             }
         }
 
@@ -50,7 +50,7 @@ namespace ClinicaFisioterapiaApi.Models
         public string Neighborhood
         {
             get => _neighborhood;
-            set => _neighborhood = value?.Trim() ?? string.Empty; // Permitindo nulo e trimando
+            set => _neighborhood = value?.Trim() ?? string.Empty; 
         }
 
         private string _city = string.Empty;
@@ -76,7 +76,7 @@ namespace ClinicaFisioterapiaApi.Models
         public string State
         {
             get => _state;
-            set => _state = value?.Trim() ?? string.Empty; // Permitindo nulo e trimando
+            set => _state = value?.Trim() ?? string.Empty; 
         }
 
         private string _zipcode = string.Empty;
@@ -85,7 +85,7 @@ namespace ClinicaFisioterapiaApi.Models
         public string Zipcode
         {
             get => _zipcode;
-            set => _zipcode = value?.Trim() ?? string.Empty; // Permitindo nulo e trimando
+            set => _zipcode = value?.Trim() ?? string.Empty; 
         }
 
         // Construtor sem parâmetros (necessário para o Entity Framework)
@@ -110,7 +110,7 @@ namespace ClinicaFisioterapiaApi.Models
             {
                 Address = address;
             }
-            if (neighborhood != null) // Permitindo limpar o valor
+            if (neighborhood != null) 
             {
                 Neighborhood = neighborhood;
             }
@@ -118,11 +118,11 @@ namespace ClinicaFisioterapiaApi.Models
             {
                 City = city;
             }
-            if (state != null) // Permitindo limpar o valor
+            if (state != null) 
             {
                 State = state;
             }
-            if (zipcode != null) // Permitindo limpar o valor
+            if (zipcode != null) 
             {
                 Zipcode = zipcode;
             }

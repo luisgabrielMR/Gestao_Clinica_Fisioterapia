@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Documents\\GitHub\\Gest-o_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj": {}
+    "C:\\Users\\User\\Documents\\GitHub\\Gestao_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Documents\\GitHub\\Gest-o_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj": {
+    "C:\\Users\\User\\Documents\\GitHub\\Gestao_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Documents\\GitHub\\Gest-o_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Documents\\GitHub\\Gestao_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj",
         "projectName": "ClinicaFisioterapiaApi",
-        "projectPath": "C:\\Users\\User\\Documents\\GitHub\\Gest-o_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj",
+        "projectPath": "C:\\Users\\User\\Documents\\GitHub\\Gestao_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\ClinicaFisioterapiaApi.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Documents\\GitHub\\Gest-o_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\obj\\",
+        "outputPath": "C:\\Users\\User\\Documents\\GitHub\\Gestao_Clinica_Fisioterapia\\Backend\\ClinicaFisioterapiaApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -44,6 +44,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.2, )"

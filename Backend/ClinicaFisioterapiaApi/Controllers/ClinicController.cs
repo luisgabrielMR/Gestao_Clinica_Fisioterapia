@@ -151,7 +151,7 @@ namespace ClinicaFisioterapiaApi.Controllers
                 }
                 _context.Clinics.Remove(clinic);
                 _context.SaveChanges();
-                return NoContent(); //204 No Content
+                return NoContent(); 
             }
             catch (Exception ex)
             {
