@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ClinicaFisioterapiaApi.Data;
-using ClinicaFisioterapiaApi.Models;
-using System;
-using System.Linq;
 using ClinicaFisioterapiaApi.Dtos.clinics;
+using ClinicaFisioterapiaApi.Services;
 
 namespace ClinicaFisioterapiaApi.Controllers
 {
@@ -11,152 +8,62 @@ namespace ClinicaFisioterapiaApi.Controllers
     [Route("api/[controller]")]
     public class ClinicController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IClinicService _service;
 
-        public ClinicController(AppDbContext context)
+        public ClinicController(IClinicService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Clinic
         [HttpGet]
-        public IActionResult GetClinics()
+        public async Task<ActionResult<IEnumerable<ClinicDto>>> GetAll()
         {
-            try
-            {
-                var clinics = _context.Clinics
-                    .Select(clinic => new ClinicDto
-                    {
-                        ClinicId = clinic.ClinicId,
-                        Name = clinic.Name,
-                        Address = clinic.Address,
-                        Neighborhood = clinic.Neighborhood,
-                        City = clinic.City,
-                        State = clinic.State,
-                        Zipcode = clinic.Zipcode
-                    }).ToList();
-
-                if (clinics == null || clinics.Count == 0)
-                {
-                    return NotFound("Nenhuma clínica encontrada.");
-                }
-
-                return Ok(clinics);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
+            var clinics = await _service.GetAllAsync();
+            return Ok(clinics);
         }
 
-        // POST: api/Clinic
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClinicDto>> GetById(int id)
+        {
+            var clinic = await _service.GetByIdAsync(id);
+
+            if (clinic is null)
+                return NotFound("Clínica não encontrada.");
+
+            return Ok(clinic);
+        }
+
         [HttpPost]
-        public IActionResult CreateClinic([FromBody] CreateClinicDto createClinicDto)
+        public async Task<ActionResult<ClinicDto>> Create([FromBody] CreateClinicDto dto)
         {
-            if (createClinicDto == null)
-            {
-                return BadRequest("Dados inválidos.");
-            }
-
-            try
-            {
-                var clinic = new Clinic
-                {
-                    Name = createClinicDto.Name,
-                    Address = createClinicDto.Address,
-                    Neighborhood = createClinicDto.Neighborhood,
-                    City = createClinicDto.City,
-                    State = createClinicDto.State,
-                    Zipcode = createClinicDto.Zipcode
-                };
-
-                _context.Clinics.Add(clinic);
-                _context.SaveChanges();
-
-                return CreatedAtAction(nameof(GetClinics), new { id = clinic.ClinicId }, clinic);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
-        }
-        // PUT: api/Clinic/{id}
-        [HttpPut("{id}")]
-        public IActionResult UpdateClinic(int id, [FromBody] UpdateClinicDto updateClinicDto)
-        {
-            if (updateClinicDto == null)
-            {
-                return BadRequest("Dados inválidos.");
-            }
-
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                return BadRequest("Dados inválidos.");
 
-            try
-            {
-                var existingClinic = _context.Clinics.Find(id);
+            var clinic = await _service.CreateAsync(dto);
 
-                if (existingClinic == null)
-                {
-                    return NotFound("Clínica não encontrada.");
-                }
-
-                if (updateClinicDto.Name != null)
-                {
-                    existingClinic.Name = updateClinicDto.Name;
-                }
-                if (updateClinicDto.Address != null)
-                {
-                    existingClinic.Address = updateClinicDto.Address;
-                }
-                if (updateClinicDto.Neighborhood != null)
-                {
-                    existingClinic.Neighborhood = updateClinicDto.Neighborhood;
-                }
-                if (updateClinicDto.City != null)
-                {
-                    existingClinic.City = updateClinicDto.City;
-                }
-                if (updateClinicDto.State != null)
-                {
-                    existingClinic.State = updateClinicDto.State;
-                }
-                if (updateClinicDto.Zipcode != null)
-                {
-                    existingClinic.Zipcode = updateClinicDto.Zipcode;
-                }
-
-                _context.SaveChanges();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
+            return CreatedAtAction(nameof(GetById), new { id = clinic.ClinicId }, clinic);
         }
-        // DELETE: api/Clinic
-        [HttpDelete("{id}")]
-        public IActionResult DeleteClinic(int id)
-        {
 
-            try
-            {
-                var clinic = _context.Clinics.Find(id);
-                if (clinic == null)
-                {
-                    return NotFound("Clinica não encontrada");
-                }
-                _context.Clinics.Remove(clinic);
-                _context.SaveChanges();
-                return NoContent(); 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] UpdateClinicDto dto)
+        {
+            var success = await _service.UpdateAsync(id, dto);
+
+            if (!success)
+                return NotFound("Clínica não encontrada.");
+
+            return Ok("Clínica atualizada com sucesso.");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var success = await _service.DeleteAsync(id);
+
+            if (!success)
+                return NotFound("Clínica não encontrada.");
+
+            return Ok("Clínica removida com sucesso.");
         }
     }
 }

@@ -9,5 +9,7 @@ namespace ClinicaFisioterapiaApi.Dtos.clinics
         public string City { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string Zipcode { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

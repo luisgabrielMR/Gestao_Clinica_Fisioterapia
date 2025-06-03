@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,125 +8,58 @@ namespace ClinicaFisioterapiaApi.Models
     public class Clinic
     {
         [Key]
-        [Column("clinicid")]
-        public int ClinicId { get; private set; } 
+        [Column("clinic_id")]
+        public int ClinicId { get; private set; }
 
-        private string _name = string.Empty;
-        [Required(ErrorMessage = "O nome da clínica é obrigatório.")]
-        [StringLength(200, ErrorMessage = "O nome da clínica deve ter no máximo {1} caracteres.")]
+        [Required]
         [Column("name")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("O nome da clínica não pode ser vazio.");
-                }
-                _name = value.Trim(); 
-            }
-        }
+        public string Name { get; set; } = string.Empty;
 
-        private string _address = string.Empty;
-        [Required(ErrorMessage = "O endereço da clínica é obrigatório.")]
-        [StringLength(255, ErrorMessage = "O endereço da clínica deve ter no máximo {1} caracteres.")]
+        [Required]
         [Column("address")]
-        public string Address
-        {
-            get => _address;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("O endereço da clínica não pode ser vazio.");
-                }
-                _address = value.Trim();
-            }
-        }
+        public string Address { get; set; } = string.Empty;
 
-        private string _neighborhood = string.Empty;
-        [StringLength(100, ErrorMessage = "O bairro da clínica deve ter no máximo {1} caracteres.")]
         [Column("neighborhood")]
-        public string Neighborhood
-        {
-            get => _neighborhood;
-            set => _neighborhood = value?.Trim() ?? string.Empty; 
-        }
+        public string Neighborhood { get; set; } = string.Empty;
 
-        private string _city = string.Empty;
-        [Required(ErrorMessage = "A cidade da clínica é obrigatória.")]
-        [StringLength(100, ErrorMessage = "A cidade da clínica deve ter no máximo {1} caracteres.")]
+        [Required]
         [Column("city")]
-        public string City
-        {
-            get => _city;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("A cidade da clínica não pode ser vazia.");
-                }
-                _city = value.Trim();
-            }
-        }
+        public string City { get; set; } = string.Empty;
 
-        private string _state = string.Empty;
-        [StringLength(50, ErrorMessage = "O estado da clínica deve ter no máximo {1} caracteres.")]
         [Column("state")]
-        public string State
-        {
-            get => _state;
-            set => _state = value?.Trim() ?? string.Empty; 
-        }
+        public string State { get; set; } = string.Empty;
 
-        private string _zipcode = string.Empty;
-        [StringLength(20, ErrorMessage = "O CEP da clínica deve ter no máximo {1} caracteres.")]
-        [Column("zipcode")]
-        public string Zipcode
-        {
-            get => _zipcode;
-            set => _zipcode = value?.Trim() ?? string.Empty; 
-        }
+        [Column("zip_code")]
+        public string Zipcode { get; set; } = string.Empty;
 
-        // Construtor sem parâmetros (necessário para o Entity Framework)
-        public Clinic() { }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Construtor para facilitar a criação de instâncias válidas
-        public Clinic(string name, string address, string city)
-        {
-            Name = name;
-            Address = address;
-            City = city;
-        }
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Método para atualizar propriedades, permitindo uma lógica de atualização mais controlada
-        public void Update(string? name = null, string? address = null, string? neighborhood = null, string? city = null, string? state = null, string? zipcode = null)
+        // Método de atualização
+        public void Update(
+            string? name = null,
+            string? address = null,
+            string? neighborhood = null,
+            string? city = null,
+            string? state = null,
+            string? zipcode = null
+        )
         {
             if (!string.IsNullOrWhiteSpace(name))
-            {
                 Name = name;
-            }
             if (!string.IsNullOrWhiteSpace(address))
-            {
                 Address = address;
-            }
-            if (neighborhood != null) 
-            {
+            if (neighborhood != null)
                 Neighborhood = neighborhood;
-            }
             if (!string.IsNullOrWhiteSpace(city))
-            {
                 City = city;
-            }
-            if (state != null) 
-            {
+            if (state != null)
                 State = state;
-            }
-            if (zipcode != null) 
-            {
+            if (zipcode != null)
                 Zipcode = zipcode;
-            }
         }
     }
 }
