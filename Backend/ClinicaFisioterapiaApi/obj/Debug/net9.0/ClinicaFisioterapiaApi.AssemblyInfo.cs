@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClinicaFisioterapiaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee10167026083baf59de1e1e5754852b60700291")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a38355eccd728a81c8eb47ce196a802b85a75ba2")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClinicaFisioterapiaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClinicaFisioterapiaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,7 +1,10 @@
 using ClinicaFisioterapiaApi.Infrastructure.Data;
 using ClinicaFisioterapiaApi.Infrastructure.Repositories.Users;
+using ClinicaFisioterapiaApi.Infrastructure.Repositories.Clinics;
 using ClinicaFisioterapiaApi.Application.Interfaces;
+using ClinicaFisioterapiaApi.Application.Interfaces.Repositories;
 using ClinicaFisioterapiaApi.Application.UseCases.Users;
+using ClinicaFisioterapiaApi.Application.UseCases.Clinics;
 using ClinicaFisioterapiaApi.Infrastructure.Services;
 using ClinicaFisioterapiaApi.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,12 +33,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // 🧱 Repositórios
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IClinicRepository, ClinicRepository>(); 
 
 // 🔐 Serviços JWT + RefreshToken
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
 
-// 🧠 UseCases
+// 🧠 UseCases (Users)
 builder.Services.AddScoped<CreateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 builder.Services.AddScoped<GetUserByIdUseCase>();
@@ -44,8 +48,15 @@ builder.Services.AddScoped<LoginUserUseCase>();
 builder.Services.AddScoped<RefreshTokenUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 
+// 🧠 UseCases (Clinics)
+builder.Services.AddScoped<CreateClinicUseCase>(); // ✅
+builder.Services.AddScoped<GetClinicByIdUseCase>();
+builder.Services.AddScoped<GetClinicsPagedUseCase>();
+builder.Services.AddScoped<UpdateClinicUseCase>();
+builder.Services.AddScoped<DeleteClinicUseCase>();
+
 // 🔁 AutoMapper
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // 🌐 CORS (para testes — restrinja em produção)
 builder.Services.AddCors(options =>
@@ -78,13 +89,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 📘 Swagger
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 🚀 Ambiente de desenvolvimento
+// Ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
