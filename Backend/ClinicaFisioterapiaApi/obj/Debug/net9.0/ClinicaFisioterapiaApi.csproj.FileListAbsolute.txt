@@ -192,6 +192,7 @@ C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisiot
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\System.Composition.Runtime.dll
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\System.Composition.TypedParts.dll
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\System.Linq.Dynamic.Core.dll
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\System.Text.Json.dll
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\cs\Microsoft.CodeAnalysis.resources.dll
 C:\Users\User\Documents\GitHub\Gestao_Clinica_Fisioterapia\Backend\ClinicaFisioterapiaApi\bin\Debug\net9.0\de\Microsoft.CodeAnalysis.resources.dll

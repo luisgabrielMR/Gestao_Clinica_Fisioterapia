@@ -1,7 +1,9 @@
 using AutoMapper;
 using ClinicaFisioterapiaApi.Application.Interfaces;
-using ClinicaFisioterapiaApi.Interface.Dtos.Users;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Input;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Output;
 using ClinicaFisioterapiaApi.Domain.Entities;
+using Domain.Enums;
 
 namespace ClinicaFisioterapiaApi.Application.UseCases.Users
 {
@@ -38,9 +40,9 @@ namespace ClinicaFisioterapiaApi.Application.UseCases.Users
             }
 
             // Se você usar Role no UpdateUserDto, pode validar e atualizar aqui.
-            if (!string.IsNullOrWhiteSpace(request.Role))
+            if (request.Role.HasValue)
             {
-                user.Role = request.Role;
+                user.Role = request.Role.Value;
             }
 
             // Atualiza a data de modificação

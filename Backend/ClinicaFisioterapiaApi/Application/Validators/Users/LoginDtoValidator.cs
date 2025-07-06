@@ -1,4 +1,4 @@
-using ClinicaFisioterapiaApi.Interface.Dtos.Users;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Input;
 using FluentValidation;
 
 namespace ClinicaFisioterapiaApi.Application.Validators.Users

@@ -1,4 +1,4 @@
-namespace ClinicaFisioterapiaApi.Interface.Dtos.Users
+namespace ClinicaFisioterapiaApi.Interface.Dtos.Users.Output
 {
     public class UserResponseDto
     {

@@ -1,8 +1,7 @@
-using ClinicaFisioterapiaApi.Interface.Dtos.Users;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Input;
 
 namespace ClinicaFisioterapiaApi.Application.Validators.Users
 {
-    using ClinicaFisioterapiaApi.Interface.Dtos.Users;
     using FluentValidation;
 
     public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
@@ -18,9 +17,8 @@ namespace ClinicaFisioterapiaApi.Application.Validators.Users
                 .MinimumLength(6).WithMessage("O campo 'Password' deve ter no mínimo 6 caracteres.");
 
             RuleFor(x => x.Role)
-                .NotEmpty().WithMessage("O campo 'Role' é obrigatório.")
-                .Must(role => role == "admin" || role == "user")
-                .WithMessage("O campo 'Role' deve ser 'admin' ou 'user'.");
+                .IsInEnum()
+                .WithMessage("O campo 'Role' deve ser um valor válido: Admin, Fisioterapeuta ou Atendente.");
         }
     }
 }

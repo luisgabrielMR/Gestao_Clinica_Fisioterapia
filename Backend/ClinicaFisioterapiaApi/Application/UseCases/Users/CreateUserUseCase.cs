@@ -1,6 +1,7 @@
 using AutoMapper;
 using ClinicaFisioterapiaApi.Application.Interfaces;
-using ClinicaFisioterapiaApi.Interface.Dtos.Users;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Input;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Output;
 using ClinicaFisioterapiaApi.Domain.Entities;
 using BCrypt.Net;
 

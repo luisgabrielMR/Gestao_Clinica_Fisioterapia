@@ -1,5 +1,8 @@
 namespace ClinicaFisioterapiaApi.Domain.Entities
 {
+
+    using global::Domain.Enums;
+
     public class User
     {
         public int UserId { get; set; }
@@ -8,7 +11,7 @@ namespace ClinicaFisioterapiaApi.Domain.Entities
 
         public string PasswordHash { get; set; } = null!;
 
-        public string Role { get; set; } = null!;
+        public UserRole Role { get; set; }
 
         public string? RefreshToken { get; set; }
 

@@ -1,4 +1,5 @@
 using ClinicaFisioterapiaApi.Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicaFisioterapiaApi.Infrastructure.Data
@@ -13,11 +14,12 @@ namespace ClinicaFisioterapiaApi.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // ✅ Se quiser mapear explicitamente o RefreshTokenExpiration:
-            modelBuilder.Entity<User>().Property(u => u.RefreshTokenExpiration);
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<string>();
 
-            // 🚫 NÃO deve existir nenhuma linha com RefreshTokenExpiresAt:
-            // modelBuilder.Entity<User>().Property(u => u.RefreshTokenExpiresAt);
+            // ✅ Mapeia explicitamente o campo de expiração do refresh token
+            modelBuilder.Entity<User>().Property(u => u.RefreshTokenExpiration);
         }
     }
 }

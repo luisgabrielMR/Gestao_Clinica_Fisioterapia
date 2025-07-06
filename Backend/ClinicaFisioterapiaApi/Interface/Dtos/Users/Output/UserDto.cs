@@ -1,4 +1,6 @@
-namespace ClinicaFisioterapiaApi.Interface.Dtos.Users
+using Domain.Enums;
+
+namespace ClinicaFisioterapiaApi.Interface.Dtos.Users.Output
 {
     public class UserDto
     {
@@ -6,6 +8,7 @@ namespace ClinicaFisioterapiaApi.Interface.Dtos.Users
 
         public string Username { get; set; } = null!;
 
-        public string Role { get; set; } = null!;
+        public UserRole Role { get; set; }
+
     }
 }

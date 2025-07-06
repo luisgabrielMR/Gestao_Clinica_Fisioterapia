@@ -1,4 +1,4 @@
-namespace ClinicaFisioterapiaApi.Interface.Dtos.Users
+namespace ClinicaFisioterapiaApi.Interface.Dtos.Users.Input
 {
     public class LoginUserDto
     {

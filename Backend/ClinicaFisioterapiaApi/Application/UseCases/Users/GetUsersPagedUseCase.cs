@@ -1,6 +1,6 @@
 using AutoMapper;
 using ClinicaFisioterapiaApi.Application.Interfaces;
-using ClinicaFisioterapiaApi.Interface.Dtos.Users;
+using ClinicaFisioterapiaApi.Interface.Dtos.Users.Output;
 using ClinicaFisioterapiaApi.Domain.Entities;
 
 namespace ClinicaFisioterapiaApi.Application.UseCases.Users

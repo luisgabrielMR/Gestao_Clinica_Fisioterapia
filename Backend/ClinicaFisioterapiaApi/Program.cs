@@ -3,28 +3,39 @@ using ClinicaFisioterapiaApi.Infrastructure.Repositories.Users;
 using ClinicaFisioterapiaApi.Application.Interfaces;
 using ClinicaFisioterapiaApi.Application.UseCases.Users;
 using ClinicaFisioterapiaApi.Infrastructure.Services;
+using ClinicaFisioterapiaApi.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
+// 🔐 Configura mapeamento da seção JwtSettings para injeção via IOptions<JwtSettings>
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
 
-// Configuração do DbContext
+// ✅ Controladores + Suporte para enums no JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+
+// 🗄️ Banco de dados PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repositórios
+// 🧱 Repositórios
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// Services (JWT + RefreshToken)
+// 🔐 Serviços JWT + RefreshToken
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
 
-// UseCases
+// 🧠 UseCases
 builder.Services.AddScoped<CreateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 builder.Services.AddScoped<GetUserByIdUseCase>();
@@ -33,10 +44,10 @@ builder.Services.AddScoped<LoginUserUseCase>();
 builder.Services.AddScoped<RefreshTokenUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 
-// AutoMapper
+// 🔁 AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// CORS (para testes — configure conforme seu ambiente real)
+// 🌐 CORS (para testes — restrinja em produção)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -48,7 +59,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-// JWT Authentication
+// 🔐 Autenticação JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? throw new Exception("JWT Secret não configurado.");
 
@@ -67,13 +78,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Swagger
+// 📘 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 🚀 Ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -82,10 +93,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Pipeline padrão correto:
 app.UseCors("AllowAll");
-
-app.UseAuthentication(); // SEMPRE antes do UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
