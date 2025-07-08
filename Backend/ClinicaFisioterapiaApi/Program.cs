@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using ClinicaFisioterapiaApi.Infrastructure.Repositories.People;
+using ClinicaFisioterapiaApi.Common.Validators;
+using ClinicaFisioterapiaApi.Application.UseCases.People;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,10 +37,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // 🧱 Repositórios
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClinicRepository, ClinicRepository>(); 
+builder.Services.AddScoped<PersonRepository>(); // People
 
 // 🔐 Serviços JWT + RefreshToken
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
+
+// ✅ Validadores
+builder.Services.AddScoped<ICpfValidator, CpfValidator>(); // CPF Validator
 
 // 🧠 UseCases (Users)
 builder.Services.AddScoped<CreateUserUseCase>();
@@ -49,11 +56,20 @@ builder.Services.AddScoped<RefreshTokenUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 
 // 🧠 UseCases (Clinics)
-builder.Services.AddScoped<CreateClinicUseCase>(); // ✅
+builder.Services.AddScoped<CreateClinicUseCase>();
 builder.Services.AddScoped<GetClinicByIdUseCase>();
 builder.Services.AddScoped<GetClinicsPagedUseCase>();
 builder.Services.AddScoped<UpdateClinicUseCase>();
 builder.Services.AddScoped<DeleteClinicUseCase>();
+
+// 🧠 UseCases (People)
+builder.Services.AddScoped<GetAllPeopleUseCase>();
+builder.Services.AddScoped<GetPersonByIdUseCase>();
+builder.Services.AddScoped<CreatePersonUseCase>();
+builder.Services.AddScoped<UpdatePersonUseCase>();
+builder.Services.AddScoped<DeletePersonUseCase>();
+
+
 
 // 🔁 AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
